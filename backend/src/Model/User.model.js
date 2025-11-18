@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Usermodel = new mongoose.Schema({
 
-    username:{
+    name:{
         type:String,
         required: true,
         trim: true,
@@ -24,4 +24,4 @@ const Usermodel = new mongoose.Schema({
 },
 {timestamps:true})
 
-export const User = mongoose.model("User", Usermodel)
+export const User = new mongoose.model("User", Usermodel)

@@ -1,23 +1,31 @@
-import { User } from "../Model/User.model";
+import { User } from "../Model/User.model.js";
+import bcrypt from 'bcrypt'
 
-export const createuser = async(name, email, pass)=>{
-    try{
-        const existance = User.findOne({email})
-        if (email == existance){
-            return json({success: false, message:"User Already Exits"})
-        }
-        
-        async(req, res)=>{
-            await User.create({
-                name:name,
-                email:email,
-                password:password
-            })
+export const createuser = async (name, email, password) => {
+  try {
+    // Check if user exists
+    const existance = await User.findOne({ email });
+    const salt = 15;
 
-            return res.json({success:true, message:"User Created Successfully"}).status(201)
-        }
+    const Hashpass = await bcrypt.hash(password, salt)
+
+    if (existance) {
+      return { success: false, message: "User Already Exists" };
     }
-    catch(error){
-        throw new Error("User Creation Failed")
-    }
-}
+
+    // Create new user
+    const user = await User.create({
+      name,
+      email,
+      password:Hashpass,
+    });
+
+    return {
+      success: true,
+      message: "User Created Successfully",
+      user,
+    };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
